@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comissionamento B2B Corp — Boobam</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f4f4f4; color: #111; min-height: 100vh; }
+
+  .page { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* Header */
+  .header { margin-bottom: 1.75rem; }
+  .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .header p  { font-size: 12px; color: #888; }
+
+  /* Slab tables */
+  .slab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 1.75rem; }
+  .slab-card { border-radius: 10px; overflow: hidden; border: 1px solid #ddd; background: #fff; }
+  .slab-card.sr { border-color: #FFD400; }
+  .slab-card-header { padding: 9px 14px; background: #f8f8f8; }
+  .slab-card.sr .slab-card-header { background: #0C0C0C; }
+  .slab-card-header h2 { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .slab-card.sr .slab-card-header h2 { color: #FFD400; }
+  .slab-card-header p  { font-size: 11px; color: #888; }
+  .slab-card.sr .slab-card-header p  { color: #aaa; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th { padding: 6px 10px; text-align: right; color: #888; font-weight: 500;
+             border-bottom: 1px solid #eee; background: #f5f5f5; font-size: 11px; }
+  thead th:first-child, thead th:nth-child(2) { text-align: left; }
+  tbody td { padding: 6px 10px; border-bottom: 0.5px solid #eee; text-align: right; }
+  tbody td:first-child, tbody td:nth-child(2) { text-align: left; }
+  tbody tr:nth-child(odd)  { background: #fff; }
+  tbody tr:nth-child(even) { background: #fafafa; }
+
+  /* Badge */
+  .badge { display: inline-block; border-radius: 3px; padding: 1px 6px;
+           font-size: 10px; font-weight: 700; border: 0.5px solid; }
+  .badge-BOO    { background: #fafafa; color: #999; border-color: #ddd; }
+  .badge-BAM    { background: #f5f5f5; color: #444; border-color: #ddd; }
+  .badge-BOOBAM { background: #fffce6; color: #7a6800; border-color: #e8d800; }
+  .badge-SUPER  { background: #1a1600; color: #FFD400; border-color: #FFD400; }
+
+  .pond { font-weight: 700; color: #b89a00; }
+  .bonus-yes { color: #2a7a4f; }
+  .bonus-no  { color: #ccc; }
+
+  /* Simulator */
+  .sim-box { background: #fff; border: 0.5px solid #ddd; border-radius: 12px;
+             padding: 1.25rem; margin-bottom: 1.75rem; }
+  .sim-box h3 { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+
+  .slider-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .slider-row label { font-size: 12px; color: #888; white-space: nowrap; }
+  .slider-row input[type=range] { flex: 1; accent-color: #FFD400; }
+  .slider-row .gmv-val { font-size: 15px; font-weight: 700; min-width: 90px; white-space: nowrap; }
+
+  .sim-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .sim-card { background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 1rem; }
+  .sim-card.sr { border-color: #FFD400; }
+  .sim-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .sim-card-head span { font-size: 14px; font-weight: 700; }
+  .sim-total { font-size: 30px; font-weight: 700; margin-bottom: 3px; }
+  .sim-sub   { font-size: 11px; color: #888; margin-bottom: 10px; }
+  .sim-meta  { font-size: 11px; color: #555; line-height: 1.9;
+               border-top: 0.5px solid #eee; padding-top: 8px; }
+  .sim-meta .extra { color: #2a7a4f; font-weight: 600; }
+  .sim-meta .atpiso { color: #cc6600; }
+
+  /* Big table */
+  .table-section h3 { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .sim-table thead th { background: #0C0C0C; color: #bbb; font-size: 11px; }
+  .sim-table thead th:first-child { color: #FFD400; }
+  .sim-table tbody tr.ref-jr { background: #fffce6 !important; }
+  .sim-table tbody tr.ref-sr { background: #fff8e6 !important; }
+  .sim-table tbody tr.cross  { background: #fff8f0 !important; }
+  .sim-table tbody td.total-jr-ref { color: #2a7a4f; font-weight: 700; }
+  .sim-table tbody td.total-sr-ref { color: #b89a00; font-weight: 700; }
+  .sim-table tbody td.diff-pos  { color: #2a7a4f; }
+  .sim-table tbody td.diff-cross { color: #cc6600; font-weight: 600; }
+  .sim-table tbody td.muted { color: #888; }
+  .sim-table tbody td.ref-label { color: #999; font-size: 11px; }
+
+  .footnote { font-size: 10px; color: #bbb; margin-top: 6px; }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .slab-grid, .sim-cards { grid-template-columns: 1fr; }
+    .sim-total { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Comissionamento B2B Corp — Consultores</h1>
+    <p>Slab prevalente &nbsp;·&nbsp; Mix 30% 1P / 70% 3P &nbsp;·&nbsp;
+       Junior CLT piso R$3.000 (não comis.) &nbsp;·&nbsp; Sênior PJ mínimo R$7.000 (comis.)</p>
+  </div>
+
+  <!-- Slab tables -->
+  <div class="slab-grid">
+
+    <div class="slab-card">
+      <div class="slab-card-header">
+        <h2>Junior CLT</h2>
+        <p>Fixo R$3.000 não comissionável &nbsp;·&nbsp; SUPER ≥ R$800k</p>
+      </div>
+      <table>
+        <thead><tr><th>Slab</th><th>Range GMV</th><th>1P</th><th>3P</th><th>Ponderado</th><th>Bônus</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-BOO">BOO</span></td>    <td>&lt; R$200k</td>          <td>0,50%</td><td>0,25%</td><td class="pond">0,325%</td><td class="bonus-no">—</td></tr>
+          <tr><td><span class="badge badge-BAM">BAM</span></td>    <td>R$200k – R$399k</td>      <td>0,75%</td><td>0,50%</td><td class="pond">0,575%</td><td class="bonus-no">—</td></tr>
+          <tr><td><span class="badge badge-BOOBAM">BOOBAM</span></td><td>R$400k – R$799k</td>    <td>1,50%</td><td>0,75%</td><td class="pond">0,975%</td><td class="bonus-no">—</td></tr>
+          <tr><td><span class="badge badge-SUPER">SUPER</span></td><td>≥ R$800k</td>             <td>1,50%</td><td>0,75%</td><td class="pond">0,975%</td><td class="bonus-yes">+20%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="slab-card sr">
+      <div class="slab-card-header">
+        <h2>Sênior PJ</h2>
+        <p>Mínimo R$7.000 comissionável &nbsp;·&nbsp; SUPER ≥ R$750k</p>
+      </div>
+      <table>
+        <thead><tr><th>Slab</th><th>Range GMV</th><th>1P</th><th>3P</th><th>Ponderado</th><th>Bônus</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-BOO">BOO</span></td>    <td>&lt; R$250k</td>          <td>1,25%</td><td>0,75%</td><td class="pond">0,900%</td><td class="bonus-no">—</td></tr>
+          <tr><td><span class="badge badge-BAM">BAM</span></td>    <td>R$250k – R$499k</td>      <td>2,50%</td><td>1,25%</td><td class="pond">1,625%</td><td class="bonus-no">—</td></tr>
+          <tr><td><span class="badge badge-BOOBAM">BOOBAM</span></td><td>R$500k – R$749k</td>    <td>3,00%</td><td>1,50%</td><td class="pond">1,950%</td><td class="bonus-no">—</td></tr>
+          <tr><td><span class="badge badge-SUPER">SUPER</span></td><td>≥ R$750k</td>             <td>3,00%</td><td>1,50%</td><td class="pond">1,950%</td><td class="bonus-yes">+20%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Simulator -->
+  <div class="sim-box">
+    <h3>Simulador interativo</h3>
+    <div class="slider-row">
+      <label>GMV mensal:</label>
+      <input type="range" id="slider" min="50000" max="1200000" step="10000" value="700000"
+             oninput="update()">
+      <span class="gmv-val" id="gmv-label">R$ 700k</span>
+    </div>
+    <div class="sim-cards">
+      <div class="sim-card" id="card-jr">
+        <div class="sim-card-head">
+          <span>Junior CLT</span>
+          <span class="badge" id="badge-jr"></span>
+        </div>
+        <div class="sim-total" id="total-jr"></div>
+        <div class="sim-sub"  id="sub-jr"></div>
+        <div class="sim-meta" id="meta-jr"></div>
+      </div>
+      <div class="sim-card sr" id="card-sr">
+        <div class="sim-card-head">
+          <span>Sênior PJ</span>
+          <span class="badge" id="badge-sr"></span>
+        </div>
+        <div class="sim-total" id="total-sr"></div>
+        <div class="sim-sub"  id="sub-sr"></div>
+        <div class="sim-meta" id="meta-sr"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full table -->
+  <div class="table-section">
+    <h3>Tabela completa de simulação</h3>
+    <table class="sim-table">
+      <thead>
+        <tr>
+          <th>GMV</th><th>Slab Jr</th><th style="text-align:right">Jr total</th>
+          <th style="text-align:right">Jr comissão</th><th>Slab Sr</th>
+          <th style="text-align:right">Sr total</th><th style="text-align:right">Sr − Jr</th>
+          <th>Referência</th>
+        </tr>
+      </thead>
+      <tbody id="sim-tbody"></tbody>
+    </table>
+    <p class="footnote">
+      Mix 30% 1P / 70% 3P &nbsp;·&nbsp; Slab prevalente &nbsp;·&nbsp;
+      Jr: BOOBAM &lt; R$800k, SUPER ≥ R$800k &nbsp;·&nbsp;
+      Sr: BOOBAM &lt; R$750k, SUPER ≥ R$750k &nbsp;·&nbsp; Bônus 20% no SUPER para ambos
+    </p>
+  </div>
+
+</div>
+
+<script>
+const MIX_1P = 0.30, MIX_3P = 0.70;
+const pond = (p1, p3) => p1 * MIX_1P + p3 * MIX_3P;
+
+const JR = [
+  { n:'BOO',    max:200000,  p1:0.005,  p3:0.0025, b:0    },
+  { n:'BAM',    max:400000,  p1:0.0075, p3:0.005,  b:0    },
+  { n:'BOOBAM', max:800000,  p1:0.015,  p3:0.0075, b:0    },
+  { n:'SUPER',  max:null,    p1:0.015,  p3:0.0075, b:0.20 },
+];
+const SR = [
+  { n:'BOO',    max:250000,  p1:0.0125, p3:0.0075, b:0    },
+  { n:'BAM',    max:500000,  p1:0.025,  p3:0.0125, b:0    },
+  { n:'BOOBAM', max:750000,  p1:0.030,  p3:0.015,  b:0    },
+  { n:'SUPER',  max:null,    p1:0.030,  p3:0.015,  b:0.20 },
+];
+
+function getSlab(slabs, gmv) {
+  return slabs.find(s => s.max === null || gmv < s.max);
+}
+
+function calcJr(gmv) {
+  const s = getSlab(JR, gmv);
+  const rate = pond(s.p1, s.p3) * (1 + s.b);
+  const comis = gmv * rate;
+  return { total: 3000 + comis, comis, slab: s.n, pond_base: pond(s.p1, s.p3), rate, bonus: s.b > 0 };
+}
+
+function calcSr(gmv) {
+  const s = getSlab(SR, gmv);
+  const rate = pond(s.p1, s.p3) * (1 + s.b);
+  const comis = gmv * rate;
+  const total = Math.max(7000, comis);
+  return { total, comis, slab: s.n, pond_base: pond(s.p1, s.p3), rate, bonus: s.b > 0, atPiso: total === 7000 };
+}
+
+function brl(v) {
+  return 'R$ ' + Math.round(v).toLocaleString('pt-BR');
+}
+
+function pct(v) {
+  return (v * 100).toFixed(3) + '%';
+}
+
+function badgeHTML(n) {
+  return `<span class="badge badge-${n}">${n}</span>`;
+}
+
+function update() {
+  const gmv = +document.getElementById('slider').value;
+  document.getElementById('gmv-label').textContent = 'R$ ' + (gmv / 1000).toFixed(0) + 'k';
+
+  const jr = calcJr(gmv);
+  const sr = calcSr(gmv);
+
+  // Junior card
+  document.getElementById('badge-jr').className = `badge badge-${jr.slab}`;
+  document.getElementById('badge-jr').textContent = jr.slab;
+  document.getElementById('total-jr').textContent = brl(jr.total);
+  document.getElementById('sub-jr').textContent = `R$3.000 fixo + ${brl(jr.comis)} comissão`;
+  document.getElementById('meta-jr').innerHTML = `
+    <div>Pond. base: <strong>${pct(jr.pond_base)}</strong>
+      ${jr.bonus ? '<span style="color:#2a7a4f;margin-left:6px">× 1,20 (SUPER)</span>' : ''}</div>
+    <div>Rate efetivo: <strong>${pct(jr.rate)}</strong></div>
+  `;
+
+  // Senior card
+  document.getElementById('badge-sr').className = `badge badge-${sr.slab}`;
+  document.getElementById('badge-sr').textContent = sr.slab;
+  document.getElementById('total-sr').textContent = brl(sr.total);
+  document.getElementById('sub-sr').textContent = sr.atPiso
+    ? `No piso mínimo (comissão gerada: ${brl(sr.comis)})`
+    : `${brl(sr.comis)} comissão`;
+  const extra = sr.total - jr.total;
+  const extraHTML = !sr.atPiso && extra !== 0
+    ? `<div class="${extra > 0 ? 'extra' : 'atpiso'}" style="margin-top:4px">
+         Extra vs Junior: <strong>${extra > 0 ? '+' : ''}${brl(extra)}</strong>
+       </div>`
+    : (sr.atPiso ? `<div class="atpiso" style="margin-top:4px">Sênior no piso — Junior à frente nesta faixa</div>` : '');
+  document.getElementById('meta-sr').innerHTML = `
+    <div>Pond. base: <strong>${pct(sr.pond_base)}</strong>
+      ${sr.bonus ? '<span style="color:#2a7a4f;margin-left:6px">× 1,20 (SUPER)</span>' : ''}</div>
+    <div>Rate efetivo: <strong>${pct(sr.rate)}</strong></div>
+    ${extraHTML}
+  `;
+}
+
+// Build full table
+const TABLE_GMV = [100,200,300,400,500,600,700,800,855,900,1000,1200].map(k => k * 1000);
+const REFS = {
+  700000:  '← Jr ≈ R$10k',
+  855000:  '← Sr ≈ R$20k',
+  400000:  '← Jr entra BOOBAM',
+  800000:  '← Jr entra SUPER',
+  750000:  '← Sr entra SUPER',
+};
+
+const tbody = document.getElementById('sim-tbody');
+TABLE_GMV.forEach((g, i) => {
+  const jr = calcJr(g), sr = calcSr(g);
+  const diff = sr.total - jr.total;
+  const isCross = sr.total < jr.total;
+  const isJrRef = g === 700000, isSrRef = g === 855000;
+
+  let rowClass = '';
+  if (isJrRef) rowClass = 'ref-jr';
+  else if (isSrRef) rowClass = 'ref-sr';
+  else if (isCross) rowClass = 'cross';
+
+  let diffCell = '—';
+  let diffClass = 'muted';
+  if (isCross) { diffCell = '↔ zona'; diffClass = 'diff-cross'; }
+  else if (diff > 0) { diffCell = '+' + brl(diff); diffClass = 'diff-pos'; }
+
+  const tr = document.createElement('tr');
+  if (rowClass) tr.className = rowClass;
+  tr.innerHTML = `
+    <td style="font-weight:${isJrRef||isSrRef?700:400}">R$${g/1000}k</td>
+    <td>${badgeHTML(jr.slab)}</td>
+    <td class="${isJrRef?'total-jr-ref':''}" style="text-align:right">${brl(jr.total)}</td>
+    <td class="muted" style="text-align:right">${brl(jr.comis)}</td>
+    <td>${badgeHTML(sr.slab)}</td>
+    <td class="${isSrRef?'total-sr-ref':''}" style="text-align:right">${brl(sr.total)}</td>
+    <td class="${diffClass}" style="text-align:right">${diffCell}</td>
+    <td class="ref-label">${REFS[g] || ''}</td>
+  `;
+  tbody.appendChild(tr);
+});
+
+// Initial render
+update();
+</script>
+</body>
+</html>
